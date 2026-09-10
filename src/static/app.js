@@ -27,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggleButton = document.getElementById("theme-toggle");
   const themeIcon = themeToggleButton?.querySelector(".theme-icon");
   const themeLabel = themeToggleButton?.querySelector(".theme-label");
+  const themePreferences = window.themePreferences || {
+    getSavedTheme: () => "light",
+    saveTheme: () => {},
+    normalizeTheme: (theme) => (theme === "dark" ? "dark" : "light"),
+  };
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -48,25 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentUser = null;
   let currentTheme = "light";
 
-  function getSavedTheme() {
-    try {
-      return localStorage.getItem("preferredTheme");
-    } catch (error) {
-      console.warn("Theme preference is unavailable.", error);
-      return null;
-    }
-  }
-
-  function saveTheme(theme) {
-    try {
-      localStorage.setItem("preferredTheme", theme);
-    } catch (error) {
-      console.warn("Unable to save theme preference.", error);
-    }
-  }
-
   function applyTheme(theme) {
-    currentTheme = theme === "dark" ? "dark" : "light";
+    currentTheme = themePreferences.normalizeTheme(theme);
     const isDarkMode = currentTheme === "dark";
 
     document.body.classList.toggle("dark-mode", isDarkMode);
@@ -78,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initializeTheme() {
-    const savedTheme = getSavedTheme();
+    const savedTheme = themePreferences.getSavedTheme(window.localStorage);
     applyTheme(savedTheme);
   }
 
@@ -89,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
-    saveTheme(nextTheme);
+    themePreferences.saveTheme(window.localStorage, nextTheme);
   }
 
   // Time range mappings for the dropdown

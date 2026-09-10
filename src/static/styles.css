@@ -23,6 +23,7 @@
   --activity-tag-background: #e8eaf6;
   --activity-tag-text: #3949ab;
   --tooltip-background: rgba(33, 33, 33, 0.9);
+  --tooltip-text: #ffffff;
 
   /* Feedback colors */
   --success: #2e7d32;
@@ -53,6 +54,7 @@ body.dark-mode {
   --activity-tag-background: #312e81;
   --activity-tag-text: #c7d2fe;
   --tooltip-background: rgba(249, 250, 251, 0.95);
+  --tooltip-text: #111827;
 }
 
 * {
@@ -331,7 +333,7 @@ button {
 .tooltip .tooltip-text {
   visibility: hidden;
   background-color: var(--tooltip-background);
-  color: var(--text-primary);
+  color: var(--tooltip-text);
   text-align: center;
   padding: 8px 12px;
   border-radius: 4px;
