@@ -48,6 +48,23 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentUser = null;
   let currentTheme = "light";
 
+  function getSavedTheme() {
+    try {
+      return localStorage.getItem("preferredTheme");
+    } catch (error) {
+      console.warn("Theme preference is unavailable.", error);
+      return null;
+    }
+  }
+
+  function saveTheme(theme) {
+    try {
+      localStorage.setItem("preferredTheme", theme);
+    } catch (error) {
+      console.warn("Unable to save theme preference.", error);
+    }
+  }
+
   function applyTheme(theme) {
     currentTheme = theme === "dark" ? "dark" : "light";
     const isDarkMode = currentTheme === "dark";
@@ -59,14 +76,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initializeTheme() {
-    const savedTheme = localStorage.getItem("preferredTheme");
+    const savedTheme = getSavedTheme();
     applyTheme(savedTheme);
   }
 
   function toggleTheme() {
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
-    localStorage.setItem("preferredTheme", nextTheme);
+    saveTheme(nextTheme);
   }
 
   // Time range mappings for the dropdown
