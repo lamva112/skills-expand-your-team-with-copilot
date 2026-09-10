@@ -373,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildActivityShareUrl(activityName) {
-    const shareUrl = new URL(window.location.href);
+    const shareUrl = new URL(window.location.pathname, window.location.origin);
     shareUrl.searchParams.set("activity", activityName);
     return shareUrl.toString();
   }
@@ -395,8 +395,12 @@ document.addEventListener("DOMContentLoaded", () => {
     helperInput.style.left = "-9999px";
     document.body.appendChild(helperInput);
     helperInput.select();
-    document.execCommand("copy");
+    const copied = document.execCommand("copy");
     document.body.removeChild(helperInput);
+
+    if (!copied) {
+      throw new Error("Copy command failed");
+    }
   }
 
   function createShareActions(activityName, details) {
@@ -415,6 +419,12 @@ document.addEventListener("DOMContentLoaded", () => {
     quickShareButton.type = "button";
     quickShareButton.className = "share-action-button";
     quickShareButton.textContent = navigator.share ? "Share" : "Copy Link";
+    quickShareButton.setAttribute(
+      "aria-label",
+      navigator.share
+        ? `Share ${activityName}`
+        : `Copy link for ${activityName}`
+    );
     quickShareButton.addEventListener("click", async () => {
       try {
         if (navigator.share) {
@@ -456,6 +466,10 @@ document.addEventListener("DOMContentLoaded", () => {
       shareLink.target = "_blank";
       shareLink.rel = "noopener noreferrer";
       shareLink.textContent = linkDetails.label;
+      shareLink.setAttribute(
+        "aria-label",
+        `Share ${activityName} on ${linkDetails.label}`
+      );
       shareActions.appendChild(shareLink);
     });
 
