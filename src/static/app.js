@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
   const themeToggleButton = document.getElementById("theme-toggle");
-  const themeIcon = themeToggleButton.querySelector(".theme-icon");
-  const themeLabel = themeToggleButton.querySelector(".theme-label");
+  const themeIcon = themeToggleButton?.querySelector(".theme-icon");
+  const themeLabel = themeToggleButton?.querySelector(".theme-label");
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -70,9 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const isDarkMode = currentTheme === "dark";
 
     document.body.classList.toggle("dark-mode", isDarkMode);
-    themeToggleButton.setAttribute("aria-pressed", String(isDarkMode));
-    themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
-    themeLabel.textContent = isDarkMode ? "Light mode" : "Dark mode";
+    if (themeToggleButton && themeIcon && themeLabel) {
+      themeToggleButton.setAttribute("aria-pressed", String(isDarkMode));
+      themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
+      themeLabel.textContent = isDarkMode ? "Light mode" : "Dark mode";
+    }
   }
 
   function initializeTheme() {
@@ -81,6 +83,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function toggleTheme() {
+    if (!themeToggleButton) {
+      return;
+    }
+
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
     saveTheme(nextTheme);
@@ -280,7 +286,9 @@ document.addEventListener("DOMContentLoaded", () => {
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
-  themeToggleButton.addEventListener("click", toggleTheme);
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener("click", toggleTheme);
+  }
 
   // Close login modal when clicking outside
   window.addEventListener("click", (event) => {
