@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
+  const schoolName = "Mergington High School";
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -374,17 +375,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildActivityShareUrl(activityName) {
-    const shareUrl = new URL(window.location.href);
+    const shareUrl = new URL(window.location.pathname, window.location.origin);
     shareUrl.searchParams.set("activity", activityName);
     return shareUrl.toString();
   }
 
   function buildActivityShareText(activityName, details) {
     if (details.description) {
-      return `Check out ${activityName} at Mergington High School: ${details.description}`;
+      return `Check out ${activityName} at ${schoolName}: ${details.description}`;
     }
 
-    return `Check out ${activityName} at Mergington High School.`;
+    return `Check out ${activityName} at ${schoolName}.`;
   }
 
   async function copyText(text) {
@@ -720,6 +721,15 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       activityCard.classList.add("shared-activity-highlight");
       activityCard.setAttribute("tabindex", "-1");
+      const sharedAnnouncement = document.createElement("span");
+      sharedAnnouncement.className = "visually-hidden";
+      sharedAnnouncement.id = `shared-activity-${normalizeActivityName(name).replace(
+        /[^a-z0-9]+/g,
+        "-"
+      )}`;
+      sharedAnnouncement.textContent = "Opened from a shared activity link.";
+      activityCard.appendChild(sharedAnnouncement);
+      activityCard.setAttribute("aria-describedby", sharedAnnouncement.id);
       if (!hasFocusedSharedActivity) {
         hasFocusedSharedActivity = true;
         requestAnimationFrame(() => {
