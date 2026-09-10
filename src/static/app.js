@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
-  let currentDifficulty = "";
+  let currentDifficulty = null;
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -77,6 +77,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function normalizeDifficultyLevel(level) {
     return (level || "").trim().toLowerCase();
+  }
+
+  function setActiveFilterButton(
+    buttons,
+    activeButton,
+    updateAriaPressed = false
+  ) {
+    buttons.forEach((btn) => {
+      const isActive = btn === activeButton;
+      btn.classList.toggle("active", isActive);
+      if (updateAriaPressed) {
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+      }
+    });
   }
 
   // Function to set day filter
@@ -452,11 +466,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const selectedDifficulty = normalizeDifficultyLevel(currentDifficulty);
       const activityDifficulty = normalizeDifficultyLevel(details.difficulty_level);
-      if (selectedDifficulty) {
-        if (activityDifficulty !== selectedDifficulty) {
+      if (currentDifficulty === null) {
+        // Default page load state: do not filter by difficulty
+      } else if (selectedDifficulty === "all-levels") {
+        if (activityDifficulty) {
           return;
         }
-      } else if (activityDifficulty) {
+      } else if (activityDifficulty !== selectedDifficulty) {
         return;
       }
 
@@ -634,9 +650,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to category filter buttons
   categoryFilters.forEach((button) => {
     button.addEventListener("click", () => {
-      // Update active class
-      categoryFilters.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
+      setActiveFilterButton(categoryFilters, button);
 
       // Update current filter and display filtered activities
       currentFilter = button.dataset.category;
@@ -646,12 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   difficultyFilters.forEach((button) => {
     button.addEventListener("click", () => {
-      difficultyFilters.forEach((btn) => {
-        btn.classList.remove("active");
-        btn.setAttribute("aria-pressed", "false");
-      });
-      button.classList.add("active");
-      button.setAttribute("aria-pressed", "true");
+      setActiveFilterButton(difficultyFilters, button, true);
       currentDifficulty = button.dataset.difficulty;
       displayFilteredActivities();
     });
@@ -660,9 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to day filter buttons
   dayFilters.forEach((button) => {
     button.addEventListener("click", () => {
-      // Update active class
-      dayFilters.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
+      setActiveFilterButton(dayFilters, button);
 
       // Update current day filter and fetch activities
       currentDay = button.dataset.day;
@@ -673,9 +680,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners for time filter buttons
   timeFilters.forEach((button) => {
     button.addEventListener("click", () => {
-      // Update active class
-      timeFilters.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
+      setActiveFilterButton(timeFilters, button);
 
       // Update current time filter and fetch activities
       currentTimeRange = button.dataset.time;

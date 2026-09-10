@@ -66,13 +66,13 @@
               </div>
             </div>
 
-            <div class="filter-container">
-              <div class="filter-label">Filter by difficulty:</div>
+            <fieldset class="filter-container difficulty-filter-container">
+              <legend class="filter-label">Filter by difficulty:</legend>
               <div class="difficulty-filters" id="difficulty-filters">
                 <button
-                  class="difficulty-filter active"
-                  data-difficulty=""
-                  aria-pressed="true"
+                  class="difficulty-filter"
+                  data-difficulty="all-levels"
+                  aria-pressed="false"
                 >
                   All Levels
                 </button>
@@ -98,7 +98,7 @@
                   Advanced
                 </button>
               </div>
-            </div>
+            </fieldset>
 
             <!-- Day Filter -->
             <div class="filter-container day-filter-container">

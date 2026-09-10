@@ -531,6 +531,12 @@ footer {
   gap: 6px;
 }
 
+.difficulty-filter-container {
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
 .filter-label {
   font-weight: 600;
   color: var(--text-primary);
