@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sharedActivityName = (
     new URLSearchParams(window.location.search).get("activity") || ""
   ).trim();
+  const normalizedSharedActivityName = normalizeActivityName(sharedActivityName);
   let hasFocusedSharedActivity = false;
 
   // Authentication state
@@ -69,10 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
       currentTimeRange = activeTimeFilter.dataset.time;
     }
 
-    if (sharedActivityName) {
-      searchQuery = sharedActivityName;
-      searchInput.value = sharedActivityName;
-    }
   }
 
   // Function to set day filter
@@ -372,6 +369,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return "academic";
   }
 
+  function normalizeActivityName(activityName) {
+    return activityName.trim().toLowerCase().replace(/\s+/g, " ");
+  }
+
+  function getActivityShareGroupId(activityName) {
+    return `share-label-${normalizeActivityName(activityName).replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )}`;
+  }
+
   function buildActivityShareUrl(activityName) {
     const shareUrl = new URL(window.location.pathname, window.location.origin);
     shareUrl.searchParams.set("activity", activityName);
@@ -406,11 +414,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function createShareActions(activityName, details) {
     const shareActions = document.createElement("div");
     shareActions.className = "share-actions";
+    shareActions.setAttribute("role", "group");
 
     const shareLabel = document.createElement("span");
+    shareLabel.id = getActivityShareGroupId(activityName);
     shareLabel.className = "share-label";
     shareLabel.textContent = "Share:";
     shareActions.appendChild(shareLabel);
+    shareActions.setAttribute("aria-labelledby", shareLabel.id);
 
     const shareUrl = buildActivityShareUrl(activityName);
     const shareText = buildActivityShareText(activityName, details);
@@ -707,7 +718,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    if (sharedActivityName && name === sharedActivityName) {
+    if (
+      normalizedSharedActivityName &&
+      normalizeActivityName(name) === normalizedSharedActivityName
+    ) {
       activityCard.classList.add("shared-activity-highlight");
       if (!hasFocusedSharedActivity) {
         hasFocusedSharedActivity = true;
