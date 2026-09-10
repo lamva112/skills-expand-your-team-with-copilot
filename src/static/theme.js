@@ -5,6 +5,14 @@
     return theme === "dark" ? "dark" : "light";
   }
 
+  function getAvailableStorage(globalLike) {
+    try {
+      return globalLike?.localStorage;
+    } catch (error) {
+      return undefined;
+    }
+  }
+
   function getSavedTheme(storage) {
     try {
       return normalizeTheme(storage?.getItem(STORAGE_KEY));
@@ -28,6 +36,7 @@
   const api = {
     STORAGE_KEY,
     normalizeTheme,
+    getAvailableStorage,
     getSavedTheme,
     saveTheme,
   };

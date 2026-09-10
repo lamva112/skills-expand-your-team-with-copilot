@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeIcon = themeToggleButton?.querySelector(".theme-icon");
   const themeLabel = themeToggleButton?.querySelector(".theme-label");
   const themePreferences = window.themePreferences || {
+    getAvailableStorage: () => undefined,
     getSavedTheme: () => "light",
     saveTheme: () => {},
     normalizeTheme: (theme) => (theme === "dark" ? "dark" : "light"),
@@ -66,7 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initializeTheme() {
-    const savedTheme = themePreferences.getSavedTheme(window.localStorage);
+    const storage = themePreferences.getAvailableStorage(window);
+    const savedTheme = themePreferences.getSavedTheme(storage);
     applyTheme(savedTheme);
   }
 
@@ -77,7 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
-    themePreferences.saveTheme(window.localStorage, nextTheme);
+    const storage = themePreferences.getAvailableStorage(window);
+    themePreferences.saveTheme(storage, nextTheme);
   }
 
   // Time range mappings for the dropdown

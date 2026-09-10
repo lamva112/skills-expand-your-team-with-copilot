@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 
 const {
   STORAGE_KEY,
+  getAvailableStorage,
   getSavedTheme,
   saveTheme,
 } = require("./theme.js");
@@ -26,6 +27,22 @@ test("getSavedTheme falls back to light when storage access fails", () => {
   };
 
   assert.equal(getSavedTheme(storage), "light");
+});
+
+test("getAvailableStorage returns undefined when localStorage is unavailable", () => {
+  assert.equal(getAvailableStorage({}), undefined);
+});
+
+test("getAvailableStorage returns undefined when reading localStorage throws", () => {
+  const fakeWindow = {};
+
+  Object.defineProperty(fakeWindow, "localStorage", {
+    get() {
+      throw new Error("storage blocked");
+    },
+  });
+
+  assert.equal(getAvailableStorage(fakeWindow), undefined);
 });
 
 test("saveTheme stores the selected theme when storage is available", () => {
