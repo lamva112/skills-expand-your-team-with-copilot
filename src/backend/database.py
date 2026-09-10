@@ -45,6 +45,7 @@ initial_activities = {
     },
     "Programming Class": {
         "description": "Learn programming fundamentals and build software projects",
+        "difficulty_level": "Beginner",
         "schedule": "Tuesdays and Thursdays, 7:00 AM - 8:00 AM",
         "schedule_details": {
             "days": ["Tuesday", "Thursday"],
@@ -144,6 +145,7 @@ initial_activities = {
     },
     "Science Olympiad": {
         "description": "Weekend science competition preparation for regional and state events",
+        "difficulty_level": "Intermediate",
         "schedule": "Saturdays, 1:00 PM - 4:00 PM",
         "schedule_details": {
             "days": ["Saturday"],
@@ -155,6 +157,7 @@ initial_activities = {
     },
     "Sunday Chess Tournament": {
         "description": "Weekly tournament for serious chess players with rankings",
+        "difficulty_level": "Advanced",
         "schedule": "Sundays, 2:00 PM - 5:00 PM",
         "schedule_details": {
             "days": ["Sunday"],
