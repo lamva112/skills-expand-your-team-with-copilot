@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ).trim();
   const normalizedSharedActivityName = normalizeActivityName(sharedActivityName);
   let hasFocusedSharedActivity = false;
+  let sharedAnnouncementSequence = 0;
 
   // Authentication state
   let currentUser = null;
@@ -375,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildActivityShareUrl(activityName) {
-    const shareUrl = new URL(window.location.pathname, window.location.origin);
+    const shareUrl = new URL(window.location.href);
     shareUrl.searchParams.set("activity", activityName);
     return shareUrl.toString();
   }
@@ -392,6 +393,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
       return;
+    }
+
+    function supportsNativeShare(sharePayload) {
+      if (!navigator.share) {
+        return false;
+      }
+
+      if (!navigator.canShare) {
+        return true;
+      }
+
+      try {
+        return navigator.canShare(sharePayload);
+      } catch (error) {
+        return false;
+      }
     }
 
     const helperInput = document.createElement("textarea");
@@ -422,25 +439,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const shareUrl = buildActivityShareUrl(activityName);
     const shareText = buildActivityShareText(activityName, details);
+    const sharePayload = {
+      title: activityName,
+      text: shareText,
+      url: shareUrl,
+    };
+    const canUseNativeShare = supportsNativeShare(sharePayload);
 
     const quickShareButton = document.createElement("button");
     quickShareButton.type = "button";
     quickShareButton.className = "share-action-button";
-    quickShareButton.textContent = navigator.share ? "Share" : "Copy Link";
+    quickShareButton.textContent = canUseNativeShare ? "Share" : "Copy Link";
     quickShareButton.setAttribute(
       "aria-label",
-      navigator.share
+      canUseNativeShare
         ? `Share ${activityName}`
         : `Copy link for ${activityName}`
     );
     quickShareButton.addEventListener("click", async () => {
       try {
-        if (navigator.share) {
-          await navigator.share({
-            title: activityName,
-            text: shareText,
-            url: shareUrl,
-          });
+        if (canUseNativeShare) {
+          await navigator.share(sharePayload);
           return;
         }
 
@@ -717,26 +736,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (
       normalizedSharedActivityName &&
+      !hasFocusedSharedActivity &&
       normalizeActivityName(name) === normalizedSharedActivityName
     ) {
       activityCard.classList.add("shared-activity-highlight");
       activityCard.setAttribute("tabindex", "-1");
       const sharedAnnouncement = document.createElement("span");
       sharedAnnouncement.className = "visually-hidden";
-      sharedAnnouncement.id = `shared-activity-${normalizeActivityName(name).replace(
-        /[^a-z0-9]+/g,
-        "-"
-      )}`;
+      sharedAnnouncement.id = `shared-activity-${sharedAnnouncementSequence++}`;
       sharedAnnouncement.textContent = "Opened from a shared activity link.";
       activityCard.appendChild(sharedAnnouncement);
       activityCard.setAttribute("aria-describedby", sharedAnnouncement.id);
-      if (!hasFocusedSharedActivity) {
-        hasFocusedSharedActivity = true;
-        requestAnimationFrame(() => {
-          activityCard.scrollIntoView({ behavior: "smooth", block: "center" });
-          activityCard.focus({ preventScroll: true });
-        });
-      }
+      hasFocusedSharedActivity = true;
+      requestAnimationFrame(() => {
+        activityCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        activityCard.focus({ preventScroll: true });
+      });
     }
 
     activitiesList.appendChild(activityCard);
