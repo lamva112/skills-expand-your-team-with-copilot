@@ -373,21 +373,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return activityName.trim().toLowerCase().replace(/\s+/g, " ");
   }
 
-  function getActivityShareGroupId(activityName) {
-    return `share-label-${normalizeActivityName(activityName).replace(
-      /[^a-z0-9]+/g,
-      "-"
-    )}`;
-  }
-
   function buildActivityShareUrl(activityName) {
-    const shareUrl = new URL(window.location.pathname, window.location.origin);
+    const shareUrl = new URL(window.location.href);
     shareUrl.searchParams.set("activity", activityName);
     return shareUrl.toString();
   }
 
   function buildActivityShareText(activityName, details) {
-    return `Check out ${activityName} at Mergington High School: ${details.description}`;
+    if (details.description) {
+      return `Check out ${activityName} at Mergington High School: ${details.description}`;
+    }
+
+    return `Check out ${activityName} at Mergington High School.`;
   }
 
   async function copyText(text) {
@@ -415,13 +412,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const shareActions = document.createElement("div");
     shareActions.className = "share-actions";
     shareActions.setAttribute("role", "group");
+    shareActions.setAttribute("aria-label", `Share ${activityName}`);
 
     const shareLabel = document.createElement("span");
-    shareLabel.id = getActivityShareGroupId(activityName);
     shareLabel.className = "share-label";
     shareLabel.textContent = "Share:";
     shareActions.appendChild(shareLabel);
-    shareActions.setAttribute("aria-labelledby", shareLabel.id);
 
     const shareUrl = buildActivityShareUrl(activityName);
     const shareText = buildActivityShareText(activityName, details);
@@ -723,10 +719,12 @@ document.addEventListener("DOMContentLoaded", () => {
       normalizeActivityName(name) === normalizedSharedActivityName
     ) {
       activityCard.classList.add("shared-activity-highlight");
+      activityCard.setAttribute("tabindex", "-1");
       if (!hasFocusedSharedActivity) {
         hasFocusedSharedActivity = true;
         requestAnimationFrame(() => {
           activityCard.scrollIntoView({ behavior: "smooth", block: "center" });
+          activityCard.focus({ preventScroll: true });
         });
       }
     }
