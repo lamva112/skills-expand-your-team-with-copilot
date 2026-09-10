@@ -169,6 +169,11 @@ section h3 {
   border-color: var(--border-focus);
 }
 
+.shared-activity-highlight {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.2);
+}
+
 .activity-card h4 {
   margin-bottom: 8px;
   color: var(--primary);
@@ -209,6 +214,56 @@ section h3 {
 .capacity-container {
   margin: 8px 0;
   width: 100%;
+}
+
+.share-actions-container {
+  margin: 8px 0 4px;
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.share-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.share-action-button,
+.share-action-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.share-action-button {
+  border: none;
+  background-color: var(--primary-light);
+  color: var(--primary-text);
+}
+
+.share-action-button:hover {
+  background-color: var(--primary);
+}
+
+.share-action-link {
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+.share-action-link:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
 }
 
 .capacity-bar-bg {
