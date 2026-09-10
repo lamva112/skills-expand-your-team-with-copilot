@@ -78,9 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
-    applyTheme(nextTheme);
     const storage = themePreferences.getAvailableStorage(window);
-    themePreferences.saveTheme(storage, nextTheme);
+    const savedTheme = themePreferences.saveTheme(storage, nextTheme);
+    applyTheme(savedTheme);
   }
 
   // Time range mappings for the dropdown
