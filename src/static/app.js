@@ -389,26 +389,26 @@ document.addEventListener("DOMContentLoaded", () => {
     return `Check out ${activityName} at ${schoolName}.`;
   }
 
+  function supportsNativeShare(sharePayload) {
+    if (!navigator.share) {
+      return false;
+    }
+
+    if (!navigator.canShare) {
+      return true;
+    }
+
+    try {
+      return navigator.canShare(sharePayload);
+    } catch (error) {
+      return false;
+    }
+  }
+
   async function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
       return;
-    }
-
-    function supportsNativeShare(sharePayload) {
-      if (!navigator.share) {
-        return false;
-      }
-
-      if (!navigator.canShare) {
-        return true;
-      }
-
-      try {
-        return navigator.canShare(sharePayload);
-      } catch (error) {
-        return false;
-      }
     }
 
     const helperInput = document.createElement("textarea");
